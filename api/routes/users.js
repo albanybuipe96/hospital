@@ -39,7 +39,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params
 
     // validate ID: responds with error-message otherwise
-    helpers.validateID(id)
+    helpers.validateID(id, res)
 
     const user = await User.findById(id).select(' -hash -__v ')
 
@@ -60,12 +60,15 @@ router.get('/:id', async (req, res) => {
 router.post('/register', async (req, res) => {
     const { name, email, phone, department, password, isNurse } = req.body
     if (!password) {
-        return res.status(codes.BAD_REQUEST).json({ success: false, message: 'Password field is required.' })
+        return res
+            .status(codes.BAD_REQUEST)
+            .json({ success: false, message: 'Password field is required.' })
     }
     let user = new User({
         name,
         email,
-        phone, department,
+        phone,
+        department,
         hash: bcrypt.hashSync(password, HASH_SECRET),
         isNurse
     })
@@ -73,10 +76,35 @@ router.post('/register', async (req, res) => {
     user = await user.save()
 
     if (!user) {
-        return res.status(codes.BAD_REQUEST).json({ success: false, message: 'User not created.' })
+        return res
+            .status(codes.BAD_REQUEST)
+            .json({ success: false, message: 'User not created.' })
     }
 
     res.status(codes.OK).send(user)
+})
+
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body
+    const user = await User.findOne({ email })
+    const secret = process.env.SECRET
+    if (!user) {
+        return res.status(codes.BAD_REQUEST).send('The user not found.')
+    }
+
+    if (user && bcrypt.compareSync(password, user.hash)) {
+        const token = jwt.sign(
+            {
+                userId: user.id,
+                isNurse: user.isNurse
+            },
+            secret,
+            { expiresIn: '1d' }
+        )
+        res.status(codes.OK).send({ user: user.email, token })
+    } else {
+        res.status(codes.BAD_REQUEST).send('password is wrong!')
+    }
 })
 
 /**
@@ -89,7 +117,7 @@ router.post('/register', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const { id } = req.params
     // validate ID: responds with error-message otherwise
-    helpers.validateID(id)
+    helpers.validateID(id, res)
 
     const { name, email, phone, department, password, isNurse } = req.body
     let currPassword
@@ -101,15 +129,22 @@ router.put('/:id', async (req, res) => {
     }
 
     const user = await User.findByIdAndUpdate(
-        id, {
-            name, email, phone, department, isNurse,
+        id,
+        {
+            name,
+            email,
+            phone,
+            department,
+            isNurse,
             hash: currPassword
         },
         { new: true }
     )
 
     if (!user) {
-        return res.status(codes.BAD_REQUEST).json({ success: false, message: 'Error updating user.' })
+        return res
+            .status(codes.BAD_REQUEST)
+            .json({ success: false, message: 'Error updating user.' })
     }
 
     res.status(codes.OK).send(user)
@@ -125,12 +160,26 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params
 
     // validate ID: responds with error-message otherwise
-    helpers.validateID(id)
+    helpers.validateID(id, res)
 
-    User.findByIdAndRemove(id).then((user) => {
-        if (user) return res.status(codes.OK).json({ success: true, message: 'User deleted.' })
-        else return res.status(codes.NOT_FOUND).json({ success: false, message: 'User not found.' })
-    }).catch((err) => res.status(codes.INTERNAL_SERVER_ERROR).json({ success: false, error: err }))
+    User.findByIdAndRemove(id)
+        .then((user) => {
+            if (user) {
+                return res
+                    .status(codes.OK)
+                    .json({ success: true, message: 'User deleted.' })
+            } else {
+                return res
+                    .status(codes.NOT_FOUND)
+                    .json({ success: false, message: 'User not found.' })
+            }
+        })
+        .catch((err) => {
+            res.status(codes.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                error: err
+            })
+        })
 })
 
 router.get('/get/count', async (req, res) => {
