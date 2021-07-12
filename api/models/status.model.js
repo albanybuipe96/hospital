@@ -1,16 +1,16 @@
 const mongoose = require('mongoose')
 
-const categorySchema = mongoose.Schema({
-    title: {
+const statusSchema = mongoose.Schema({
+    name: {
         type: String,
-        required: true
+        required: true,
     },
     icon: {
-        type: String
+        type: String,
     },
     color: {
-        type: String
-    }
+        type: String,
+    },
 })
 
 statusSchema.virtual('id').get(function () {
@@ -21,4 +21,4 @@ statusSchema.set('toJSON', {
     virtuals: true
 })
 
-module.exports = mongoose.model('Category', categorySchema)
+module.exports = mongoose.model('Status', statusSchema)

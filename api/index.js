@@ -9,6 +9,7 @@ const morgan = require('morgan')
  */
 
 const patientsRoute = require('./routes/users')
+const statusesRoute = require('./routes/statuses')
 
 const app = express()
 app.use(cors())
@@ -23,6 +24,7 @@ const mongoURI = process.env.MONGO_URI
 const dbNAME = process.env.DB_NAME
 
 app.use(`${apiURL}/patients`, patientsRoute)
+app.use(`${apiURL}/statuses`, statusesRoute)
 
 mongoose.connect(mongoURI, {
     useNewUrlParser: true,

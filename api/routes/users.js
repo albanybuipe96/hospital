@@ -14,7 +14,7 @@ const router = express.Router()
  * Hash env variable
  */
 
-const HASH_SECRET = process.env.HASH_SECRET
+const HASH_SECRET = +process.env.HASH_SECRET
 
 /**
  * Get all [users]. In the context of this application, a [user] includes [nurses]; and [nurses]
@@ -64,16 +64,14 @@ router.post('/register', async (req, res) => {
             .status(codes.BAD_REQUEST)
             .json({ success: false, message: 'Password field is required.' })
     }
-    let user = new User({
+    const user = await new User({
         name,
         email,
         phone,
         department,
         hash: bcrypt.hashSync(password, HASH_SECRET),
-        isNurse
-    })
-
-    user = await user.save()
+        isNurse,
+    }).save()
 
     if (!user) {
         return res
