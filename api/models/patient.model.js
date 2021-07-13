@@ -3,29 +3,33 @@ const mongoose = require('mongoose')
 const patientSchema = mongoose.Schema({
     firstName: {
         type: String,
-        required: true
+        required: true,
     },
     lastName: {
         type: String,
-        required: true
+        required: true,
     },
     otherName: {
         type: String,
-        default: ''
+        default: '',
     },
     image: {
         type: String,
-        default: ''
+        default: '',
     },
     status: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
-        required: true
+        ref: 'Status',
+        required: true,
+    },
+    phone: {
+        type: String,
+        default: '',
     },
     dateStarted: {
         type: Date,
-        default: Date.now
-    }
+        default: Date.now,
+    },
 })
 
 patientSchema.virtual('id').get(function () {

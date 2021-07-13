@@ -1,2 +1,4 @@
 api/node_modules
 app/.vscode
+.DS_Store
+api/package-lock.json
