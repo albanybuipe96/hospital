@@ -1,0 +1,81 @@
+.formWrapper {
+  min-height: 100vh;
+  display: grid;
+  background-color: #101010ee;
+  background-blend-mode: overlay;
+  background-image: url("../images/bg.jpeg");
+  background-size: cover;
+  place-items: center;
+}
+
+.introText {
+  font-size: 2rem;
+  font-family: "Sen", sans-serif;
+  font-weight: bolder;
+  max-width: 400px;
+  color: #f4f4f4;
+}
+
+.started {
+  color: #ff95a9;
+}
+
+.formContainer {
+  padding: 50px 30px;
+  background-color: #ebf0ecad;
+  border-radius: 10px;
+  width: min(90vw, 450px);
+}
+
+.names {
+  display: flex;
+  gap: 20px;
+}
+
+.formContainer input {
+  border-radius: 0;
+  margin-bottom: 10px;
+}
+.heading {
+  font-size: 1.9rem;
+}
+
+.formHeading > p {
+  font-size: 0.9rem;
+}
+
+.formContainer button {
+  border: none;
+  border-radius: 0px;
+  padding: 10px 10px;
+}
+
+.forgot {
+  padding: 5px 0 10px 0;
+  display: block;
+  text-align: right;
+}
+
+.or {
+  display: block;
+  text-align: center;
+  padding: 5px 0 10px 0;
+  font-weight: bold;
+}
+@media screen and (min-width: 700px) {
+  .name {
+    display: grid;
+    grid-template-columns: 49% 49%;
+    gap: 2%;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .formContainer {
+    width: 90%;
+  }
+
+  .name input {
+    margin-bottom: 15px;
+  }
+}

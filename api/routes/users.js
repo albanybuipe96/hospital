@@ -14,7 +14,7 @@ const router = express.Router()
  * Hash env variable
  */
 
-const HASH_SECRET = process.env.HASH_SECRET
+const HASH_SECRET = Number(process.env.HASH_SECRET)
 
 /**
  * Get all [users]. In the context of this application, a [user] includes [nurses]; and [nurses]
@@ -123,7 +123,7 @@ router.put('/:id', async (req, res) => {
     let currPassword
     const currUser = await User.findById(id)
     if (password) {
-        currPassword = bcrypt.hashSync(password, HASH_SECRET)
+        currPassword = await bcrypt.hash(password, 10)
     } else {
         currPassword = currUser.hash
     }
@@ -183,12 +183,12 @@ router.delete('/:id', async (req, res) => {
 })
 
 router.get('/get/count', async (req, res) => {
-    const count = await User.countDocuments(count => count)
+    const count = await User.countDocuments((count) => count)
 
-    if (!count) return res.status(codes.INTERNAL_SERVER_ERROR).json({ success: false })
+    if (!count)
+        return res.status(codes.INTERNAL_SERVER_ERROR).json({ success: false })
 
     res.status(codes.OK).send({ count })
 })
-
 
 module.exports = router
