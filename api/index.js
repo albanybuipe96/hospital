@@ -22,12 +22,14 @@ const apiPORT = process.env.API_PORT
 const mongoURI = process.env.MONGO_URI
 const dbNAME = process.env.DB_NAME
 
-app.use(`${apiURL}/patients`, patientsRoute)
+app.use(`${apiURL}/users`, patientsRoute)
 
-mongoose.connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    dbName: dbNAME
-}).then(console.log('Connected to MongoDB.'))
+mongoose
+    .connect(mongoURI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        dbName: dbNAME
+    })
+    .then(console.log('Connected to MongoDB.'))
 
 app.listen(apiPORT, () => console.log(`Running HMS on port: ${apiPORT}`))
